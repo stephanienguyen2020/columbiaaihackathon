@@ -33,3 +33,6 @@ npm-debug.log*
 # backend
 backend/uploads/
 backend/outputs/
+
+# pycache
+backend/__pycache__/
