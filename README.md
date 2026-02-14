@@ -2,6 +2,8 @@
 
 Turn a short voice memo into a 1-minute marketing video. Upload audio → get a transcript, AI-generated script, scene images, ElevenLabs narration, and a stitched video—with optional compliance checks.
 
+[![SGStudio Demo](https://img.youtube.com/vi/7dm4JynXwR8/0.jpg)](https://www.youtube.com/watch?v=7dm4JynXwR8 "Watch the SGStudio Demo")
+
 ## Architecture
 
 ```
