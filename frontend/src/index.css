@@ -1,0 +1,157 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&family=Petrona:ital,wght@0,100..900;1,100..900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 48 75% 80%;
+    --foreground: 0 0% 10%;
+    --card: 48 75% 80%;
+    --card-foreground: 0 0% 10%;
+    --popover: 48 75% 80%;
+    --popover-foreground: 0 0% 10%;
+    --primary: 0 0% 10%;
+    --primary-foreground: 48 100% 97%;
+    --secondary: 270 40% 77%;
+    --secondary-foreground: 0 0% 10%;
+    --muted: 48 50% 85%;
+    --muted-foreground: 0 0% 30%;
+    --accent: 270 40% 77%;
+    --accent-foreground: 0 0% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 10%;
+    --input: 0 0% 10%;
+    --ring: 0 0% 10%;
+    --radius: 1rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-neo-cream text-neo-black font-sans antialiased;
+    overflow-x: hidden;
+  }
+}
+
+@layer components {
+  /* Neobrutalism button styles */
+  .btn-neo {
+    @apply px-6 py-3 bg-neo-lavender border-neo border-neo-black rounded-neo font-semibold
+           shadow-neo transition-all duration-150
+           hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-neo-hover
+           active:translate-x-[4px] active:translate-y-[4px] active:shadow-none;
+  }
+  
+  .btn-neo-mint {
+    @apply px-6 py-3 bg-neo-mint border-neo border-neo-black rounded-neo font-semibold
+           shadow-neo transition-all duration-150
+           hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-neo-hover
+           active:translate-x-[4px] active:translate-y-[4px] active:shadow-none;
+  }
+  
+  .btn-neo-peach {
+    @apply px-6 py-3 bg-neo-peach border-neo border-neo-black rounded-neo font-semibold
+           shadow-neo transition-all duration-150
+           hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-neo-hover
+           active:translate-x-[4px] active:translate-y-[4px] active:shadow-none;
+  }
+  
+  .btn-neo-black {
+    @apply px-6 py-3 bg-neo-black border-neo border-neo-black rounded-neo font-semibold text-neo-cream
+           shadow-neo transition-all duration-150
+           hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-neo-hover
+           active:translate-x-[4px] active:translate-y-[4px] active:shadow-none;
+  }
+  
+  /* Neobrutalism card styles */
+  .card-neo {
+    @apply bg-neo-white border-neo border-neo-black rounded-neo shadow-neo;
+  }
+  
+  .card-neo-lavender {
+    @apply bg-neo-lavender border-neo border-neo-black rounded-neo shadow-neo;
+  }
+  
+  .card-neo-mint {
+    @apply bg-neo-mint border-neo border-neo-black rounded-neo shadow-neo;
+  }
+  
+  .card-neo-peach {
+    @apply bg-neo-peach border-neo border-neo-black rounded-neo shadow-neo;
+  }
+  
+  /* Neobrutalism tag/badge styles */
+  .tag-neo {
+    @apply inline-flex items-center gap-2 px-4 py-2 bg-neo-white border-2 border-neo-black rounded-full
+           shadow-[2px_2px_0px_0px_#1A1A1A] text-sm font-medium;
+  }
+  
+  /* Neobrutalism input styles */
+  .input-neo {
+    @apply px-4 py-3 bg-neo-white border-neo border-neo-black rounded-neo
+           shadow-neo focus:outline-none focus:shadow-neo-hover
+           placeholder:text-neo-black/50;
+  }
+}
+
+@layer utilities {
+  .text-stroke {
+    -webkit-text-stroke: 2px #1A1A1A;
+  }
+  
+  .text-stroke-thin {
+    -webkit-text-stroke: 1px #1A1A1A;
+  }
+}
+
+/* Custom scrollbar - neobrutalism style */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F5E6A3;
+  border-left: 3px solid #1A1A1A;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #C4A8E0;
+  border: 3px solid #1A1A1A;
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #B898D6;
+}
+
+/* Selection color */
+::selection {
+  background: #C4A8E0;
+  color: #1A1A1A;
+}
+
+/* Neo-shadow utility classes (v0 design system compatibility) */
+.neo-shadow-sm {
+  box-shadow: 2px 2px 0px 0px #1A1A1A;
+}
+.neo-shadow {
+  box-shadow: 4px 4px 0px 0px #1A1A1A;
+}
+.neo-shadow-lg {
+  box-shadow: 6px 6px 0px 0px #1A1A1A;
+}
+
+/* Marquee animation for platform ticker */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
