@@ -1,25 +1,22 @@
-import Navbar from './sections/Navbar';
-import Hero from './sections/Hero';
-import Features from './sections/Features';
-import Platforms from './sections/Platforms';
-import HowItWorks from './sections/HowItWorks';
-import Pricing from './sections/Pricing';
-import CTASection from './sections/CTASection';
-import FooterV0 from './sections/FooterV0';
+import { Routes, Route } from "react-router-dom";
+import LandingPage from "./pages/LandingPage";
+import UploadPage from "./pages/UploadPage";
+import TranscriptPage from "./pages/TranscriptPage";
+import ScriptPage from "./pages/ScriptPage";
+import ProgressPage from "./pages/ProgressPage";
+import ResultPage from "./pages/ResultPage";
 
 function App() {
   return (
     <div className="min-h-screen bg-neo-cream">
-      <Navbar />
-      <main>
-        <Hero />
-        <Features />
-        <Platforms />
-        <HowItWorks />
-        <Pricing />
-        <CTASection />
-      </main>
-      <FooterV0 />
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/create" element={<UploadPage />} />
+        <Route path="/transcript/:jobId" element={<TranscriptPage />} />
+        <Route path="/script/:jobId" element={<ScriptPage />} />
+        <Route path="/progress/:jobId" element={<ProgressPage />} />
+        <Route path="/result/:jobId" element={<ResultPage />} />
+      </Routes>
     </div>
   );
 }

@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { ArrowRight, Sparkles, Star } from "lucide-react";
 
 function Starburst({ className }: { className?: string }) {
@@ -44,15 +45,13 @@ export default function Hero() {
 
         {/* CTAs */}
         <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-          <a
-            href="https://apps.apple.com"
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            to="/create"
             className="inline-flex items-center gap-2 rounded-neo border-neo border-neo-black bg-neo-peach px-8 py-4 text-base font-bold text-neo-black shadow-neo transition-all hover:translate-x-[3px] hover:translate-y-[3px] hover:shadow-none"
           >
             Start Creating Free
             <ArrowRight className="h-5 w-5" />
-          </a>
+          </Link>
           <a
             href="#how-it-works"
             className="inline-flex items-center gap-2 rounded-neo border-neo border-neo-black bg-neo-white px-8 py-4 text-base font-bold text-neo-black shadow-neo transition-all hover:translate-x-[3px] hover:translate-y-[3px] hover:shadow-none"

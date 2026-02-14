@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 
 function Starburst({ className }: { className?: string }) {
@@ -26,15 +27,13 @@ export default function CTASection() {
                 No agencies, no delays, no big budgets.
               </p>
               <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row lg:justify-start">
-                <a
-                  href="https://apps.apple.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <Link
+                  to="/create"
                   className="inline-flex items-center gap-2 rounded-xl border-[3px] border-foreground bg-card px-8 py-4 text-base font-bold text-foreground transition-all hover:translate-x-[3px] hover:translate-y-[3px] hover:shadow-none neo-shadow"
                 >
                   Start Creating Free
                   <ArrowRight className="h-5 w-5" />
-                </a>
+                </Link>
               </div>
             </div>
           </div>
