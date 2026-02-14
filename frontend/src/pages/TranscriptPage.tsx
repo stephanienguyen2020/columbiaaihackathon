@@ -1,13 +1,15 @@
 import { useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
-import { Sparkles, ArrowLeft, ArrowRight, Loader2, FileText } from "lucide-react";
+import { Sparkles, ArrowLeft, ArrowRight, Loader2, FileText, Headphones } from "lucide-react";
 import { generateScript } from "../services/api";
 
 export default function TranscriptPage() {
   const navigate = useNavigate();
   const { jobId } = useParams<{ jobId: string }>();
   const location = useLocation();
-  const transcript = (location.state as { transcript?: string })?.transcript || "";
+  const locationState = location.state as { transcript?: string; audioUrl?: string } | null;
+  const transcript = locationState?.transcript || "";
+  const audioUrl = locationState?.audioUrl || null;
 
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -56,6 +58,24 @@ export default function TranscriptPage() {
             Here's what we heard. Review it before we generate your marketing script.
           </p>
         </div>
+
+        {/* Audio Playback */}
+        {audioUrl && (
+          <div className="card-neo-mint p-6 mb-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-xl bg-neo-white border-neo border-neo-black flex items-center justify-center">
+                <Headphones className="w-5 h-5" />
+              </div>
+              <h2 className="text-xl font-bold">Your Voice Memo</h2>
+            </div>
+            <audio
+              src={audioUrl}
+              controls
+              className="w-full"
+              style={{ borderRadius: "16px" }}
+            />
+          </div>
+        )}
 
         {/* Transcription */}
         <div className="card-neo p-8 mb-6">

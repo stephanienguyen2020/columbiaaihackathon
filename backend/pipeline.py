@@ -48,6 +48,10 @@ def get_job(job_id: str) -> PipelineJob | None:
     return _jobs.get(job_id)
 
 
+def list_jobs() -> list[PipelineJob]:
+    return list(_jobs.values())
+
+
 def update_job(job: PipelineJob):
     _jobs[job.job_id] = job
 

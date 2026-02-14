@@ -112,3 +112,20 @@ export async function getJobStatus(jobId: string): Promise<JobStatusResponse> {
 export function getVideoUrl(jobId: string): string {
   return `${API_BASE}/pipeline/${jobId}/video`;
 }
+
+export interface VideoSummary {
+  job_id: string;
+  title: string;
+  stage: PipelineStage;
+  created_at: string;
+  video_url: string | null;
+}
+
+export async function listVideos(): Promise<VideoSummary[]> {
+  const res = await fetch(`${API_BASE}/pipeline/videos`);
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: "Failed to load videos" }));
+    throw new Error(err.detail || "Failed to load videos");
+  }
+  return res.json();
+}

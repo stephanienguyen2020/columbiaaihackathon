@@ -1,6 +1,12 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Sparkles, Loader2, CheckCircle2, Circle, AlertCircle } from "lucide-react";
+import {
+  Sparkles,
+  Loader2,
+  CheckCircle2,
+  Circle,
+  AlertCircle,
+} from "lucide-react";
 import { getJobStatus, type PipelineStage } from "../services/api";
 
 const STAGE_CONFIG: {
@@ -12,10 +18,7 @@ const STAGE_CONFIG: {
   { key: "transcribing", label: "Transcribing Audio", color: "bg-neo-lavender" },
   { key: "pre_compliance_check", label: "Pre-Compliance Check", color: "bg-neo-lavender" },
   { key: "scripting", label: "Generating Script", color: "bg-neo-lavender" },
-  { key: "generating_images", label: "Generating Scene Images", color: "bg-neo-peach" },
-  { key: "generating_video", label: "Generating Video Clips", color: "bg-neo-peach" },
-  { key: "stitching", label: "Assembling Final Video", color: "bg-neo-mint" },
-  { key: "post_compliance_check", label: "Final Compliance Check", color: "bg-neo-lavender" },
+  { key: "generating_video", label: "Generating Video", color: "bg-neo-peach" },
   { key: "complete", label: "Complete!", color: "bg-neo-mint" },
 ];
 
@@ -27,7 +30,8 @@ function getStageIndex(stage: PipelineStage): number {
 export default function ProgressPage() {
   const navigate = useNavigate();
   const { jobId } = useParams<{ jobId: string }>();
-  const [currentStage, setCurrentStage] = useState<PipelineStage>("generating_images");
+  const [currentStage, setCurrentStage] =
+    useState<PipelineStage>("generating_images");
   const [detail, setDetail] = useState("Starting video generation...");
   const [error, setError] = useState<string | null>(null);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -117,8 +121,8 @@ export default function ProgressPage() {
                     isCurrent
                       ? `${stage.color} border-neo-black font-bold`
                       : isDone
-                      ? "bg-neo-mint/30 border-neo-black/20"
-                      : "bg-neo-white/50 border-neo-black/10"
+                        ? "bg-neo-mint/30 border-neo-black/20"
+                        : "bg-neo-white/50 border-neo-black/10"
                   }`}
                 >
                   {isDone ? (

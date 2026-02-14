@@ -36,6 +36,12 @@ export default function Navbar() {
 
         <div className="hidden items-center gap-3 md:flex">
           <Link
+            to="/gallery"
+            className="rounded-xl border-[3px] border-foreground bg-muted px-5 py-2.5 text-sm font-bold text-foreground transition-all hover:bg-primary hover:text-primary-foreground"
+          >
+            Gallery
+          </Link>
+          <Link
             to="/create"
             className="rounded-xl border-[3px] border-foreground bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none neo-shadow-sm"
           >
@@ -70,6 +76,13 @@ export default function Navbar() {
               </a>
             ))}
             <div className="mt-3 flex flex-col gap-3 border-t-[3px] border-foreground pt-4">
+              <Link
+                to="/gallery"
+                className="rounded-xl border-[3px] border-foreground bg-muted px-5 py-2.5 text-center text-sm font-bold text-foreground"
+                onClick={() => setMobileOpen(false)}
+              >
+                Gallery
+              </Link>
               <Link
                 to="/create"
                 className="rounded-xl border-[3px] border-foreground bg-primary px-5 py-2.5 text-center text-sm font-bold text-primary-foreground neo-shadow-sm"

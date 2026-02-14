@@ -5,6 +5,7 @@ import TranscriptPage from "./pages/TranscriptPage";
 import ScriptPage from "./pages/ScriptPage";
 import ProgressPage from "./pages/ProgressPage";
 import ResultPage from "./pages/ResultPage";
+import GalleryPage from "./pages/GalleryPage";
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/create" element={<UploadPage />} />
+        <Route path="/gallery" element={<GalleryPage />} />
         <Route path="/transcript/:jobId" element={<TranscriptPage />} />
         <Route path="/script/:jobId" element={<ScriptPage />} />
         <Route path="/progress/:jobId" element={<ProgressPage />} />

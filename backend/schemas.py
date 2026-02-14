@@ -83,3 +83,11 @@ class JobStatusResponse(BaseModel):
     progress_detail: str = ""
     final_video_url: Optional[str] = None
     error: Optional[str] = None
+
+
+class VideoSummary(BaseModel):
+    job_id: str
+    title: str = ""
+    stage: PipelineStage
+    created_at: datetime
+    video_url: Optional[str] = None

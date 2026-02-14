@@ -12,14 +12,19 @@ import {
   Volume2,
   Camera,
 } from "lucide-react";
-import { startGeneration, type MarketingScript, type ComplianceResult } from "../services/api";
+import {
+  startGeneration,
+  type MarketingScript,
+  type ComplianceResult,
+} from "../services/api";
 
 export default function ScriptPage() {
   const navigate = useNavigate();
   const { jobId } = useParams<{ jobId: string }>();
   const location = useLocation();
   const script = (location.state as { script?: MarketingScript })?.script;
-  const compliance = (location.state as { compliance?: ComplianceResult })?.compliance;
+  const compliance = (location.state as { compliance?: ComplianceResult })
+    ?.compliance;
 
   const [isStarting, setIsStarting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -32,7 +37,9 @@ export default function ScriptPage() {
       await startGeneration(jobId, script || undefined);
       navigate(`/progress/${jobId}`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to start generation.");
+      setError(
+        err instanceof Error ? err.message : "Failed to start generation."
+      );
     } finally {
       setIsStarting(false);
     }
@@ -43,7 +50,9 @@ export default function ScriptPage() {
       <div className="min-h-screen bg-neo-cream pt-24 pb-16">
         <div className="mx-auto max-w-2xl px-6 text-center">
           <h1 className="text-3xl font-bold mb-4">No Script Found</h1>
-          <p className="text-neo-black/70 mb-6">Something went wrong. Please start over.</p>
+          <p className="text-neo-black/70 mb-6">
+            Something went wrong. Please start over.
+          </p>
           <button onClick={() => navigate("/create")} className="btn-neo">
             Start Over
           </button>
@@ -74,7 +83,8 @@ export default function ScriptPage() {
             Your Marketing Script
           </h1>
           <p className="text-lg text-neo-black/70">
-            Review the AI-generated script and approve it to start video generation.
+            Review the AI-generated script and approve it to start video
+            generation.
           </p>
         </div>
 
@@ -85,7 +95,8 @@ export default function ScriptPage() {
             <div className="flex items-center gap-2">
               <Users className="w-4 h-4 text-neo-black/70" />
               <span className="text-sm">
-                <span className="font-bold">Audience:</span> {script.target_audience}
+                <span className="font-bold">Audience:</span>{" "}
+                {script.target_audience}
               </span>
             </div>
             <div className="flex items-center gap-2">
@@ -97,7 +108,8 @@ export default function ScriptPage() {
             <div className="flex items-center gap-2">
               <Clock className="w-4 h-4 text-neo-black/70" />
               <span className="text-sm">
-                <span className="font-bold">Duration:</span> {script.total_duration_seconds}s
+                <span className="font-bold">Duration:</span>{" "}
+                {script.total_duration_seconds}s
               </span>
             </div>
           </div>
@@ -123,53 +135,53 @@ export default function ScriptPage() {
             )}
             <div>
               <h3 className="font-bold">
-                {compliancePassed ? "Compliance Check Passed" : "Compliance Issues Found"}
+                {compliancePassed
+                  ? "Compliance Check Passed - by White Circle AI"
+                  : "Compliance Issues Found - by White Circle AI"}
               </h3>
-              {compliance?.flagged_issues && compliance.flagged_issues.length > 0 && (
-                <ul className="mt-2 text-sm space-y-1">
-                  {compliance.flagged_issues.map((issue, i) => (
-                    <li key={i}>- {issue}</li>
-                  ))}
-                </ul>
-              )}
+              {compliance?.flagged_issues &&
+                compliance.flagged_issues.length > 0 && (
+                  <ul className="mt-2 text-sm space-y-1">
+                    {compliance.flagged_issues.map((issue, i) => (
+                      <li key={i}>- {issue}</li>
+                    ))}
+                  </ul>
+                )}
             </div>
           </div>
         </div>
 
-        {/* Scenes */}
-        <h3 className="text-xl font-bold mb-4">Scenes ({script.scenes.length})</h3>
-        <div className="space-y-4 mb-8">
-          {script.scenes.map((scene) => (
-            <div key={scene.scene_number} className="card-neo p-6 relative">
-              <div className="absolute -top-3 -left-3 w-8 h-8 rounded-full bg-neo-lavender border-neo border-neo-black flex items-center justify-center text-sm font-bold">
-                {scene.scene_number}
+        {/* Video Scene */}
+        {script.scenes.length > 0 && (
+          <div className="card-neo p-8 mb-8">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-10 h-10 rounded-xl bg-neo-peach border-neo border-neo-black flex items-center justify-center">
+                <Film className="w-5 h-5" />
               </div>
-              <div className="ml-4">
-                <div className="flex items-center gap-4 mb-3 text-sm text-neo-black/70">
-                  <span className="flex items-center gap-1">
-                    <Clock className="w-3 h-3" />
-                    {scene.duration_seconds}s
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Camera className="w-3 h-3" />
-                    {scene.camera_direction}
-                  </span>
-                  <span className="tag-neo text-xs py-1 px-2">
-                    {scene.transition}
-                  </span>
-                </div>
-                <div className="mb-3">
-                  <p className="text-sm font-bold text-neo-black/60 mb-1">Narration</p>
-                  <p className="text-neo-black italic">"{scene.narration}"</p>
-                </div>
-                <div>
-                  <p className="text-sm font-bold text-neo-black/60 mb-1">Visual</p>
-                  <p className="text-sm text-neo-black/80">{scene.visual_description}</p>
-                </div>
+              <h3 className="text-xl font-bold">Video Scene</h3>
+              <div className="ml-auto flex items-center gap-3 text-sm text-neo-black/70">
+                <span className="flex items-center gap-1">
+                  <Clock className="w-3 h-3" />
+                  {script.scenes[0].duration_seconds}s
+                </span>
+                <span className="flex items-center gap-1">
+                  <Camera className="w-3 h-3" />
+                  {script.scenes[0].camera_direction}
+                </span>
               </div>
             </div>
-          ))}
-        </div>
+            <div className="space-y-4">
+              <div className="bg-neo-cream/60 border-2 border-neo-black/20 rounded-neo p-5">
+                <p className="text-sm font-bold text-neo-black/60 mb-2">Narration</p>
+                <p className="text-neo-black italic text-lg">"{script.scenes[0].narration}"</p>
+              </div>
+              <div className="bg-neo-lavender/20 border-2 border-neo-black/20 rounded-neo p-5">
+                <p className="text-sm font-bold text-neo-black/60 mb-2">Visual Description</p>
+                <p className="text-neo-black/80">{script.scenes[0].visual_description}</p>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Error */}
         {error && (

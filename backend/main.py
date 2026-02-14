@@ -8,6 +8,7 @@ Routes:
   POST /pipeline/{id}/full       Run entire pipeline end-to-end (auto mode)
   GET  /pipeline/{id}/status     Poll job status
   GET  /pipeline/{id}/video      Download final video
+  GET  /pipeline/videos          List all generated videos
   GET  /health                   Health check
 """
 
@@ -28,6 +29,7 @@ from schemas import (
     ScriptResponse,
     GenerateRequest,
     JobStatusResponse,
+    VideoSummary,
 )
 from pipeline import (
     create_job,
@@ -219,6 +221,50 @@ async def full_pipeline(
     )
 
 
+# ── List all generated videos ────────────────────────────────────────────────
+
+@app.get("/pipeline/videos", response_model=list[VideoSummary])
+async def list_videos():
+    """Scan the outputs directory for completed videos and return summaries."""
+    from datetime import datetime
+
+    results: list[VideoSummary] = []
+    output_dir = settings.output_dir
+
+    if not output_dir.exists():
+        return results
+
+    for job_dir in output_dir.iterdir():
+        if not job_dir.is_dir():
+            continue
+        video_path = job_dir / "clips" / "video.mp4"
+        if not video_path.exists():
+            continue
+
+        job_id = job_dir.name
+        # Try to get title from in-memory job if available
+        job = get_job(job_id)
+        title = job.script.title if job and job.script else ""
+        created_at = (
+            job.created_at
+            if job
+            else datetime.fromtimestamp(video_path.stat().st_mtime)
+        )
+
+        results.append(
+            VideoSummary(
+                job_id=job_id,
+                title=title,
+                stage=PipelineStage.COMPLETE,
+                created_at=created_at,
+                video_url=f"/pipeline/{job_id}/video",
+            )
+        )
+
+    results.sort(key=lambda v: v.created_at, reverse=True)
+    return results
+
+
 # ── Status polling ───────────────────────────────────────────────────────────
 
 @app.get("/pipeline/{job_id}/status", response_model=JobStatusResponse)
@@ -246,21 +292,19 @@ async def get_status(job_id: str):
 @app.get("/pipeline/{job_id}/video")
 async def download_video(job_id: str):
     """Download the final marketing video."""
+    # Try in-memory job first
     job = get_job(job_id)
-    if not job:
-        raise HTTPException(status_code=404, detail="Job not found")
-    if not job.final_video_path:
-        raise HTTPException(status_code=400, detail="Video not ready yet")
+    if job and job.final_video_path:
+        path = Path(job.final_video_path)
+        if path.exists():
+            return FileResponse(path=str(path), media_type="video/mp4", filename=path.name)
 
-    path = Path(job.final_video_path)
-    if not path.exists():
-        raise HTTPException(status_code=404, detail="Video file not found")
+    # Fallback: look on disk in outputs directory
+    disk_path = settings.output_dir / job_id / "clips" / "video.mp4"
+    if disk_path.exists():
+        return FileResponse(path=str(disk_path), media_type="video/mp4", filename=disk_path.name)
 
-    return FileResponse(
-        path=str(path),
-        media_type="video/mp4",
-        filename=path.name,
-    )
+    raise HTTPException(status_code=404, detail="Video not found")
 
 
 # ── Get full job details (for debugging / frontend) ─────────────────────────

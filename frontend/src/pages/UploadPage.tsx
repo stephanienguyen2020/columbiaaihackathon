@@ -98,9 +98,10 @@ export default function UploadPage() {
     setIsSubmitting(true);
     setError(null);
     try {
+      const audioUrl = URL.createObjectURL(audioSource);
       const result = await uploadAudio(audioSource);
       navigate(`/transcript/${result.job_id}`, {
-        state: { transcript: result.transcript },
+        state: { transcript: result.transcript, audioUrl },
       });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Upload failed. Please try again.");
