@@ -1,14 +1,16 @@
 """
-Pipeline orchestrator: coordinates the full voice-to-video flow.
+Pipeline orchestrator: voice-to-video flow using Claude, ElevenLabs, and Replicate.
 
 Flow:
   1. Upload voice memo
-  2. Transcribe via Gemini (multimodal audio)
-  3. Generate marketing script via Gemini
+  2. Transcribe via Whisper (OpenAI)
+  3. Generate marketing script via Claude
   4. PRE-compliance check via White Circle
-  5. Generate one video clip via Veo (text-to-video, no images, no stitching)
-  6. POST-compliance check via White Circle
-  7. Deliver
+  5. Generate scene images via Replicate (FLUX)
+  6. Generate narration audio via ElevenLabs
+  7. Stitch images + audio into video (MoviePy)
+  8. POST-compliance check via White Circle
+  9. Deliver
 """
 
 import uuid
@@ -22,11 +24,11 @@ from schemas import (
     PipelineStage,
     MarketingScript,
 )
-from gemini_service import (
-    transcribe_audio,
-    generate_script,
-    generate_single_video,
-)
+from whisper_service import transcribe_audio
+from claude_service import generate_script
+from image_service import generate_all_images
+from elevenlabs_service import generate_script_audio
+from video_stitcher import stitch_images_with_audio
 from whitecircle_service import (
     check_script_compliance,
     check_video_compliance,
@@ -116,14 +118,14 @@ async def run_script_generation(job_id: str) -> PipelineJob:
         raise
 
 
-# ── Step 3: Video generation only (one clip, no images, no stitching) ────────
+# ── Step 3: Images + ElevenLabs voice + stitch ─────────────────────────────
 
 async def run_media_generation(
     job_id: str,
     approved_script: MarketingScript | None = None,
 ) -> PipelineJob:
     """
-    Runs single video gen → post-compliance. No image gen, no stitching.
+    Generate scene images (Replicate) → narration (ElevenLabs) → stitch into video.
     Accepts optional approved_script if the user edited it.
     """
     job = get_job(job_id)
@@ -137,14 +139,31 @@ async def run_media_generation(
         raise ValueError(f"Job {job_id} has no script")
 
     job_dir = settings.output_dir / job.job_id
+    images_dir = job_dir / "images"
+    video_dir = job_dir / "clips"
 
     try:
-        # ── Single video generation (text-to-video, first scene) ─────────────
-        job.stage = PipelineStage.VIDEO_GEN
+        # ── Scene images (Replicate FLUX) ───────────────────────────
+        job.stage = PipelineStage.IMAGE_GEN
+        update_job(job)
+        image_paths = await generate_all_images(job.script, images_dir)
+        job.image_paths = [str(p) for p in image_paths]
         update_job(job)
 
-        video_dir = job_dir / "clips"
-        final_path = await generate_single_video(job.script, video_dir)
+        # ── Narration audio (ElevenLabs) ────────────────────────────
+        job.stage = PipelineStage.VIDEO_GEN
+        update_job(job)
+        audio_path = job_dir / "narration.mp3"
+        await generate_script_audio(job.script, audio_path)
+
+        # ── Stitch images + audio into video ──────────────────────────
+        job.stage = PipelineStage.STITCHING
+        update_job(job)
+        video_dir.mkdir(parents=True, exist_ok=True)
+        final_path = video_dir / "video.mp4"
+        await stitch_images_with_audio(
+            image_paths, job.script, audio_path, final_path
+        )
         job.video_clip_paths = [str(final_path)]
         job.final_video_path = str(final_path)
         update_job(job)
@@ -152,7 +171,6 @@ async def run_media_generation(
         # ── Post-compliance check ────────────────────────────────────
         job.stage = PipelineStage.POST_COMPLIANCE
         update_job(job)
-
         post_compliance = await check_video_compliance(job.script, str(final_path))
         job.post_compliance = post_compliance
 
@@ -179,7 +197,8 @@ async def run_media_generation(
 async def run_full_pipeline(job_id: str, audio_path: Path, mime_type: str) -> PipelineJob:
     """
     Runs the entire pipeline end-to-end:
-    transcribe → script → pre-compliance → single video (no images, no stitch) → post-compliance
+    transcribe (Whisper) → script (Claude) → pre-compliance → images (Replicate) →
+    voice (ElevenLabs) → stitch → post-compliance
     """
     await run_transcription(job_id, audio_path, mime_type)
     print(f"Transcription complete")    

@@ -56,8 +56,8 @@ app = FastAPI(
     title="VidPipe - Voice to Marketing Video Pipeline",
     description=(
         "Upload a voice memo → AI generates a 1-minute marketing video. "
-        "Powered by Gemini (transcription + script), Nano Banana (images), "
-        "Veo 3 (video), and White Circle AI (compliance)."
+        "Powered by Whisper (transcription), Claude (script), Replicate FLUX (images), "
+        "ElevenLabs (voice), and White Circle AI (compliance)."
     ),
     version="0.1.0",
     lifespan=lifespan,
@@ -81,9 +81,10 @@ async def health():
         "status": "ok",
         "service": "vidpipe",
         "models": {
-            "transcription": settings.gemini_flash_model,
-            "image_gen": settings.gemini_image_model,
-            "video_gen": settings.veo_model,
+            "transcription": "whisper-1",
+            "script": settings.claude_model,
+            "image_gen": settings.replicate_flux_model,
+            "voice": "elevenlabs",
         },
     }
 
@@ -323,11 +324,11 @@ async def get_job_details(job_id: str):
 def _stage_description(stage: PipelineStage) -> str:
     return {
         PipelineStage.UPLOADED: "Voice memo uploaded",
-        PipelineStage.TRANSCRIBING: "Transcribing voice memo with Gemini...",
+        PipelineStage.TRANSCRIBING: "Transcribing voice memo with Whisper...",
         PipelineStage.PRE_COMPLIANCE: "Running pre-generation compliance check...",
-        PipelineStage.SCRIPTING: "Generating marketing script with Gemini...",
-        PipelineStage.IMAGE_GEN: "Generating scene images with Nano Banana...",
-        PipelineStage.VIDEO_GEN: "Generating video clips with Veo 3...",
+        PipelineStage.SCRIPTING: "Generating marketing script with Claude...",
+        PipelineStage.IMAGE_GEN: "Generating scene images with Replicate FLUX...",
+        PipelineStage.VIDEO_GEN: "Generating voice with ElevenLabs...",
         PipelineStage.STITCHING: "Assembling final video...",
         PipelineStage.POST_COMPLIANCE: "Running post-generation compliance check...",
         PipelineStage.COMPLETE: "✅ Video ready for download!",
